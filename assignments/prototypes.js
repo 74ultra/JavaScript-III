@@ -16,6 +16,27 @@
   * destroy() // prototype method that returns: `${this.name} was removed from the game.`
 */
 
+function GameObject(gameAttrs){
+  this.createdAt = gameAttrs.createdAt;
+  this.name = gameAttrs.name;
+  this.dimensions = gameAttrs.dimensions;
+}
+
+
+GameObject.prototype.destroy = function(){
+  return `${this.name} was removed from the game`
+}
+
+console.log(GameObject);
+
+const starGazer = new GameObject({
+  createdAt: 'Wallsingham Studios',
+  name: 'Star Gazer',
+  dimensions: 5
+})
+
+console.log(starGazer.destroy())
+
 /*
   === CharacterStats ===
   * healthPoints
