@@ -16,12 +16,39 @@
   * destroy() // prototype method that returns: `${this.name} was removed from the game.`
 */
 
+function GameObject(gameProps){
+  this.createdAt = gameProps.createdAt;
+  this.name = gameProps.name;
+  this.dimensions = gameProps.dimensions;
+}
+
+
+GameObject.prototype.destroy = function(){
+  return `${this.name} was removed from the game`
+}
+
+
+
 /*
   === CharacterStats ===
   * healthPoints
   * takeDamage() // prototype method -> returns the string '<object name> took damage.'
   * should inherit destroy() from GameObject's prototype
 */
+
+function CharacterStats(charProps){
+  GameObject.call(this, charProps);
+  this.healthPoints = charProps.healthPoints;
+}
+
+CharacterStats.prototype = Object.create(GameObject.prototype)
+
+CharacterStats.prototype.takeDamage = function(){
+  return `${this.name} took damage`
+}
+
+
+
 
 /*
   === Humanoid (Having an appearance or character resembling that of a human.) ===
@@ -32,7 +59,40 @@
   * should inherit destroy() from GameObject through CharacterStats
   * should inherit takeDamage() from CharacterStats
 */
- 
+
+function Humanoid(humProps){
+  CharacterStats.call(this, humProps);
+  this.team = humProps.team;
+  this.weapons = humProps.weapons;
+  this.language = humProps.language;
+}
+
+Humanoid.prototype = Object.create(CharacterStats.prototype);
+
+Humanoid.prototype.greet = function(){
+  return `${this.name} offers a greeting in ${this.language}.`
+}
+
+
+
+/*
+const link = new Humanoid({
+  createdAt: 'Place',
+  name: 'Link',
+  dimensions: {
+    length: 5,
+    width: 5,
+    height: 5,
+  },
+  healthPoints: 100,
+  team: 'Blue Mountain Clan',
+  weapons: 'battle axe',
+  language: 'Sindarin'
+})
+
+console.log(link.greet())
+*/
+
 /*
   * Inheritance chain: GameObject -> CharacterStats -> Humanoid
   * Instances of Humanoid should have all of the same properties as CharacterStats and GameObject.
@@ -41,7 +101,7 @@
 
 // Test you work by un-commenting these 3 objects and the list of console logs below:
 
-/*
+
   const mage = new Humanoid({
     createdAt: new Date(),
     dimensions: {
@@ -102,9 +162,127 @@
   console.log(archer.greet()); // Lilith offers a greeting in Elvish.
   console.log(mage.takeDamage()); // Bruce took damage.
   console.log(swordsman.destroy()); // Sir Mustachio was removed from the game.
-*/
+
 
   // Stretch task: 
   // * Create Villain and Hero constructor functions that inherit from the Humanoid constructor function.  
   // * Give the Hero and Villains different methods that could be used to remove health points from objects which could result in destruction if health gets to 0 or drops below 0;
   // * Create two new objects, one a villain and one a hero and fight it out with methods!
+
+  function Villian (vilProps){
+    Humanoid.call(this, vilProps);
+    this.attackStrength = vilProps.attackStrength;
+  }
+
+  Villian.prototype = Object.create(Humanoid.prototype)
+
+  Villian.prototype.vilAttack = function(opponent){
+    let damageAmount = this.attackStrength + (Math.floor(Math.random() * 10))
+    if(opponent.healthPoints > 0){
+      opponent.healthPoints = opponent.healthPoints - damageAmount;
+      if(opponent.healthPoints > 0){
+        console.log(`${opponent.name} has been attacked. ${opponent.name} has ${opponent.healthPoints} health points left.`);
+      } else {
+        console.log(`${opponent.name} is dead. Stop hitting a corpse.`)
+      }
+    } else {
+      console.log(`${opponent.name} is dead. Stop hitting a corpse.`)
+    }
+    this.healthPoints -= 5;
+    console.log(`That attack cost health points. ${this.name} has ${this.healthPoints} health points left.`)
+    
+  }
+
+  function Hero (heroProps){
+    Humanoid.call(this, heroProps);
+    this.attackStrength = heroProps.attackStrength;
+  }
+
+  Hero.prototype = Object.create(Humanoid.prototype)
+
+  Hero.prototype.heal = function (){
+    let healAmount = this.attackStrength + 5 + (Math.floor(Math.random() * 10));
+    if(this.healthPoints >= 100){
+      console.log(`${this.name}'s health is already full.`)
+    } else if ((this.healthPoints + healAmount) > 100){
+      this.healthPoints = 100;
+      console.log(`${this.name} cast a healing spell. ${this.name} has ${this.healthPoints} health points left`)
+    } else {
+      this.healthPoints += healAmount;
+      console.log(`${this.name} cast a healing spell. ${this.name} has ${this.healthPoints} health points left`)
+    }
+  }
+
+  Hero.prototype.attack = function(opponent){
+    if(opponent.healthPoints > 0){
+      opponent.healthPoints = opponent.healthPoints - this.attackStrength;
+      if(opponent.healthPoints > 0){
+        console.log(`${opponent.name} has been attacked. ${opponent.name} has ${opponent.healthPoints} health points left.`);
+      } else {
+        console.log(`${opponent.name} is dead. Stop hitting a corpse.`)
+      }
+    } else {
+      console.log(`${opponent.name} is dead. Stop hitting a corpse.`)
+    }
+  }
+
+  const link = new Villian({
+    createdAt: 'Place',
+    name: 'Link',
+    dimensions: {
+      length: 5,
+      width: 5,
+      height: 5,
+    },
+    healthPoints: 100,
+    team: 'Blue Mountain Clan',
+    weapons: 'battle axe',
+    language: 'Sindarin',
+    attackStrength: 10,
+
+
+  })
+
+  const blink = new Hero({
+    createdAt: 'Place',
+    name: 'Blink',
+    dimensions: {
+      length: 5,
+      width: 5,
+      height: 5,
+    },
+    healthPoints: 100,
+    team: 'Red Mountain Clan',
+    weapons: 'battle axe',
+    language: 'Sindarin',
+    attackStrength: 10,
+
+
+  })
+
+  link.vilAttack(blink);
+
+  link.vilAttack(blink);
+
+  link.vilAttack(blink);
+
+  blink.heal();
+
+  blink.heal();
+
+  blink.heal();
+
+  blink.heal();
+
+  blink.attack(link);
+
+  blink.attack(link);
+
+ 
+
+  
+
+  
+
+  
+
